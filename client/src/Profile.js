@@ -9,15 +9,14 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 const Profile = (props) => {
-
-  const { userData = {}, displayNameFunction, mobileNoFunction, getUserDetails } = props;
-  const [firstName, setFirstName] = useState(userData.firstName || "")
-  const [lastName, setLastName] = useState(userData.lastName || "")
-  const [displayName, setDisplayName] = useState(userData.displayName || "")
-  const [email, setEmail] = useState(userData.email || "")
-  const [phone1, setPhone1] = useState(userData.phone1 || "")
-  const [phone2, setPhone2] = useState(userData.phone2 || "")
-  const [location, setLocation] = useState(userData.location || "")
+  const { userData = {}, displayNameFunction, mobileNoFunction } = props;
+  const [firstName, setFirstName] = useState(userData.firstName || "");
+  const [lastName, setLastName] = useState(userData.lastName || "");
+  const [displayName, setDisplayName] = useState(userData.displayName || "");
+  const [email, setEmail] = useState(userData.email || "");
+  const [phone1, setPhone1] = useState(userData.phone1 || "");
+  const [phone2, setPhone2] = useState(userData.phone2 || "");
+  const [location, setLocation] = useState(userData.location || "");
 
   const styles = {
     marginLeft: "300px",
@@ -32,67 +31,75 @@ const Profile = (props) => {
   };
 
   const onChangeFirstName = (e) => {
-    setFirstName(e.target.value)
+    setFirstName(e.target.value);
   };
 
   const onChangeLastName = (e) => {
-    setLastName(e.target.value)
+    setLastName(e.target.value);
   };
 
   const onChangeDisplayName = (e) => {
-    setDisplayName(e.target.value)
-    displayNameFunction(e.target.value)
+    setDisplayName(e.target.value);
+    displayNameFunction(e.target.value);
   };
 
   const onChangeEmail = (e) => {
-    setEmail(e.target.value)
+    setEmail(e.target.value);
   };
 
   const onChangePhone1 = (e) => {
-    setPhone1(e.target.value)
-    mobileNoFunction(e.target.value)
+    setPhone1(e.target.value);
+    mobileNoFunction(e.target.value);
   };
 
   const onChangePhone2 = (e) => {
-    setPhone2(e.target.value)
+    setPhone2(e.target.value);
   };
 
   const onChangeLocation = (e) => {
-    setLocation(e.target.value)
+    setLocation(e.target.value);
   };
 
   const onSubmit = async () => {
     try {
-      if (!isEmpty(firstName) && !isEmpty(lastName) &&
-        !isEmpty(displayName) && !isEmpty(location) &&
-        (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) &&
-        (/^\d{10}$/).test(phone1) &&
-        (/^\d{10}$/).test(phone2)) {
-
-        let data = { firstName, lastName, displayName, email, phone1, phone2, location }
+      if (
+        !isEmpty(firstName) &&
+        !isEmpty(lastName) &&
+        !isEmpty(displayName) &&
+        !isEmpty(location) &&
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) &&
+        /^\d{10}$/.test(phone1) &&
+        /^\d{10}$/.test(phone2)
+      ) {
+        let data = {
+          firstName,
+          lastName,
+          displayName,
+          email,
+          phone1,
+          phone2,
+          location,
+        };
         let config = {
-          method: 'post',
-          url: 'http://localhost:8000/updateUser',
+          method: "post",
+          url: "http://localhost:8000/updateUser",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          data: data
+          data: data,
         };
         await axios(config);
-        window.location.reload(false)
+        props.refreshProfile();
+      } else {
+        console.log("Validation error !");
       }
-      else {
-        console.log("Validation error !")
-      }
-    }
-    catch (e) {
+    } catch (e) {
       console.log("Error", JSON.stringify(e.message));
     }
   };
 
   const onReset = () => {
-    getUserDetails()
-    window.location.reload(false)
+    props.refreshProfile();
   };
 
   return (
@@ -148,7 +155,11 @@ const Profile = (props) => {
             required={true}
             defaultValue={email}
             onChange={onChangeEmail}
-            error={(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) ? false : true)}
+            error={
+              /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
+                ? false
+                : true
+            }
           />
         </Grid>
         <Grid item xs={12} sm={6}>

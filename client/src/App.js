@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 import "./App.css";
@@ -8,44 +8,56 @@ import Profile from "./Profile";
 import Photo from "./Photo";
 
 const App = () => {
-
   const [userData, setUserData] = useState({});
   const [mobileNo, setMobileNo] = useState("");
   const [dispName, setDispName] = useState("");
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
-    getUserDetails()
+    getUserDetails();
   }, []);
 
+  const refreshProfile = async () => {
+    setShowProfile(false);
+    await getUserDetails();
+    setShowProfile(true);
+  };
+
   const getUserDetails = async () => {
-    return await axios.get("http://localhost:8000/getUser")
+    return await axios
+      .get("http://localhost:8000/getUser")
       .then((response) => {
-        setUserData(response.data)
-        setMobileNo(response.data.phone1)
-        setDispName(response.data.displayName)
+        setUserData(response.data);
+        setMobileNo(response.data.phone1);
+        setDispName(response.data.displayName);
+        setShowProfile(true);
       })
-      .catch((error) => console.log(error))
+      .catch((error) => console.log(error));
   };
 
   const displayNameFunction = (displayName) => {
-    setDispName(displayName)
+    setDispName(displayName);
   };
 
   const mobileNoFunction = (mobileNo) => {
-    setMobileNo(mobileNo)
+    setMobileNo(mobileNo);
   };
 
   return (
     <div>
-      {
-        userData && userData.firstName &&
-        <>
-          <Header />
-          <Menu />
-          <Profile userData={userData} displayNameFunction={displayNameFunction} mobileNoFunction={mobileNoFunction} getUserDetails={getUserDetails} />
-          <Photo dispName={dispName} mobileNo={mobileNo} />
-        </>
-      }
+      <>
+        <Header />
+        <Menu />
+        {showProfile && (
+          <Profile
+            userData={userData}
+            displayNameFunction={displayNameFunction}
+            mobileNoFunction={mobileNoFunction}
+            refreshProfile={refreshProfile}
+          />
+        )}
+        <Photo dispName={dispName} mobileNo={mobileNo} />
+      </>
     </div>
   );
 };
